@@ -8,7 +8,7 @@ const UserImage = ({ image, size = "60px" }) => {
         width={size}
         height={size}
         alt="user"
-        src={`${process.env.BACKENDURL}/assets/${image}`}
+        src={`https://socialmedia-pqsi.onrender.com/assets/${image}`}
       />
     </Box>
   );

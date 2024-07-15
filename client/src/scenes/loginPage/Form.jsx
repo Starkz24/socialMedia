@@ -63,7 +63,7 @@ const Form = () => {
     formData.append("picturePath", values.picture.name);
   
     try {
-      const response = await fetch(`${process.env.BACKENDURL}/auth/register`, {
+      const response = await fetch(`https://socialmedia-pqsi.onrender.com/auth/register`, {
         method: "POST",
         body: formData,
       });
@@ -86,7 +86,7 @@ const Form = () => {
 
   const login = async (values, onSubmitProps) => {
     try {
-      const response = await fetch(`${process.env.BACKENDURL}/auth/login`, {
+      const response = await fetch(`https://socialmedia-pqsi.onrender.com/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
