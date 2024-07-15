@@ -56,44 +56,61 @@ const Form = () => {
   const isRegister = pageType === "register";
 
   const register = async (values, onSubmitProps) => {
-    // this allows us to send form info with image
     const formData = new FormData();
     for (let value in values) {
       formData.append(value, values[value]);
     }
     formData.append("picturePath", values.picture.name);
-
-    const savedUserResponse = await fetch(
-      "http://localhost:3001/auth/register",
-      {
+  
+    try {
+      const response = await fetch("http://localhost:3001/auth/register", {
         method: "POST",
         body: formData,
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
       }
-    );
-    const savedUser = await savedUserResponse.json();
-    onSubmitProps.resetForm();
-
-    if (savedUser) {
-      setPageType("login");
+  
+      const savedUser = await response.json();
+      onSubmitProps.resetForm();
+  
+      if (savedUser) {
+        setPageType("login");
+      }
+    } catch (error) {
+      console.error('Error during registration:', error);
     }
   };
 
   const login = async (values, onSubmitProps) => {
-    const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(values),
-    });
-    const loggedIn = await loggedInResponse.json();
-    onSubmitProps.resetForm();
-    if (loggedIn) {
-      dispatch(
-        setLogin({
-          user: loggedIn.user,
-          token: loggedIn.token,
-        })
-      );
-      navigate("/home");
+    try {
+      const response = await fetch("http://localhost:3001/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
+      }
+  
+      const loggedIn = await response.json();
+      onSubmitProps.resetForm();
+  
+      if (loggedIn) {
+        dispatch(
+          setLogin({
+            user: loggedIn.user,
+            token: loggedIn.token,
+          })
+        );
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
     }
   };
 

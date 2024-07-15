@@ -22,6 +22,7 @@ import { users, posts } from "./data/index.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config();
+
 const app = express();
 app.use(cors())
 app.use(express.json());
@@ -31,10 +32,7 @@ app.use(morgan("common"));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
-app.use(express.static(path.join(__dirname, "../client/build")))
-app.use((req, res, next)=>{
-  res.sendFile(path.join(__dirname, "../client", "/build", "index.html"))
-})
+
 
 /* FILE STORAGE */
 const storage = multer.diskStorage({
@@ -56,6 +54,13 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 
+// Catch-all route to serve the React app
+app.use(express.static(path.join(__dirname, '../client/build')));
+app.use((req, res, next) => {
+  res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+});
+
+
 //Mongoose Setup
 const PORT = process.env.PORT || 6000;
 mongoose.connect(`${process.env.MONGO_URI}`, {
@@ -63,6 +68,6 @@ mongoose.connect(`${process.env.MONGO_URI}`, {
     useUnifiedTopology: true,
 }).then((() => {
     app.listen(PORT, () => console.log(`Server Running on Port : ${PORT}`));
-    User.insertMany(users);
-    Post.inserMany(posts);
+    // User.insertMany(users);
+    // Post.insertMany(posts);
 })).catch((error)=>console.log(`${error} did not connect`))
